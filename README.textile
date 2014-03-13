@@ -5,3 +5,6 @@ http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls
 http://www.cassilis.plus.com/TAC/Xl0000007.xls
 
 http://www.cassilis.plus.com/TAC/crane-cso-locations.xls
+
+view.html displays the CSO locations parsed by the "Thames CSO Locations" scraper.
+Points are displayed in a different colour according to the original dataset.
