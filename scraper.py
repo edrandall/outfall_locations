@@ -56,16 +56,14 @@ def scrapeXlsData(dataSetId, srcUrl):
 	for i in range(len(keys)):
 		keys[i] = keys[i].replace(' ','_').lower()
 
-	rowsFound = 0
+	rowNumber = 0
 	rowsSaved = 0
-	for rownumber in range(1, sheet.nrows):
-		rowsFound += 1
-		
+	for rowNumber in range(1, sheet.nrows):
 		# create dictionary of the row values
 		values = [ cellval(c, book.datemode) for c in sheet.row(rownumber) ]
 		# zip(keys,values) combines the two arrays: keys (column headings) and values into a single map.
 		data = dict(zip(keys, values))
-		data['rownumber'] = rownumber
+		data['rownumber'] = rowNumber
 		data['datasetid'] = dataSetId
 
 		if 'grid_reference' in data:
@@ -95,21 +93,22 @@ def scrapeXlsData(dataSetId, srcUrl):
 			rowsSaved = rowsSaved + 1
 
 	scraperwiki.sqlite.commit();
-	print "Dataset: {0} saved: {1}/{2}".format(dataSetId, rowsSaved, rowsFound)
+	print "Dataset: {0} saved: {1}/{2}".format(dataSetId, rowsSaved, rowNumber)
 	return rowsSaved
 
 
 def scrapeEpicollectXMLData(dataSetId, srcUrl):
 	rowsSaved = 0
-	rowsFound = 0
+	rowNumber = 0
 	print "Scraping Outfall dataset: ",dataSetId+" from: "+srcUrl
 	xml = scraperwiki.scrape(srcUrl)
 	dom = ElementTree.XML(xml)
 	for entry in dom.findall('./table/entry'):
-		rowsFound += 1
+		rowNumber += 1
 		data = dict()
 		data['datasetid'] = dataSetId
-		data['rownumber'] = elementValueInt(entry, 'id')
+		data['rownumber'] = rowNumber
+		data['site_id'] = elementValueInt(entry, 'id')
 		data['site_name'] = elementValue(entry, 'AddOutFDesc', 'Outfall_Assessment_key')
 		data['lat'] = elementValueFloat(entry, 'PWSI_GPS_lat')
 		data['lng'] = elementValueFloat(entry, 'PWSI_GPS_lon')
@@ -123,14 +122,13 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 			rowsSaved += 1
 
 	scraperwiki.sqlite.commit();
-	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
+	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowNumber))
 	return rowsSaved
 
 
 def isValidRow(row):
 	return (row.get('datasetid') != None and 
-		row.get('rownumber') != None and 
-		row.get('site_name') != None)
+		row.get('rownumber') != None)
 		
 		
 def normalisedDischargeType(text):
