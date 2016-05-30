@@ -16,7 +16,7 @@ from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
 import pprint
 
-TABLENAME = "cso_locations";
+TABLENAME = 'cso_locations'
 
 # Normalised version of "discharge_type"
 DISCHARGE_TYPES = {
@@ -172,13 +172,13 @@ def elementValue(entry, *keys):
 	return None
 		
 
-def dropTable():
-	sql = "DROP TABLE `"+TABLENAME+"`";
+def dropTable(name):
+	sql = "DROP TABLE `"+name+"`";
 	scraperwiki.sqlite.execute(sql);
 	scraperwiki.sqlite.commit();
 
-def createTable():
-	sql = "CREATE TABLE IF NOT EXISTS `"+TABLENAME+"` ("+\
+def createTable(name):
+	sql = "CREATE TABLE IF NOT EXISTS `"+name+"` ("+\
 			"`datasetid` text, "+\
 			"`rownumber` integer, "+\
 			"`site_name` text, "+\
@@ -198,8 +198,8 @@ def createTable():
 
 # Main program
 
-dropTable()
-createTable()
+dropTable(TABLENAME)
+createTable(TABLENAME)
 
 SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
