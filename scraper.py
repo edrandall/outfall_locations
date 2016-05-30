@@ -98,7 +98,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['datasetid'] = dataSetId
 		data['rownumber'] = elementValue(entry, 'id')
 		data['lat'] = elementValue(entry, 'PWSI_GPS_lat')
-		data['lon'] = eelementValue(entry, 'PWSI_GPS_lon')
+		data['lon'] = elementValue(entry, 'PWSI_GPS_lon')
 		data['site_name'] = elementValue(entry, ['AddOutFDesc', 'Outfall_Assessment_key'])
 		rowsSaved += 1
 	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
