@@ -163,23 +163,23 @@ html, body, #content {
 
   
 var model = {
-    title: 'Thames CSO Map',
+	title: 'Thames CSO Map',
 	jsonURL: 'https://api.morph.io/edrandall/thames_cso_locations/data.json',
 	key: 'UYMEaitAVHPwK6bMbgFy',
-    query: "select * from 'cso_locations' ORDER BY datasetid, lat, lng",
-    dataFormat: 'jsondict',
-    dataSets: new Array(),
-    dataSetIds: new Array(),
-    images: new Array(),
-    colours: [ "FF9966", "6699FF", "CCFF66", "9966FF", "FF3300", "996600", "FFFFFF" ],
-    ndt: [ "Storm Sewer Overflow", "Sewage Pumping Station", "Storm Tank Overflow" ],
-    mapOptions: {
-        zoom: 8,
-        center: new google.maps.LatLng(51.500000, -1.000000),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    },
-    gMap: null,
-    gMarkers: null,
+	queries: [ "select * from 'cso_locations' ORDER BY datasetid, lat, lng" ],
+	dataFormat: 'jsondict',
+	dataSets: new Array(),
+	dataSetIds: new Array(),
+	images: new Array(),
+	colours: [ "FF9966", "6699FF", "CCFF66", "9966FF", "FF3300", "996600", "FFFFFF" ],
+	ndt: [ "Storm Sewer Overflow", "Sewage Pumping Station", "Storm Tank Overflow" ],
+	mapOptions: {
+		zoom: 8,
+		center: new google.maps.LatLng(51.500000, -1.000000),
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	},
+	gMap: null,
+	gMarkers: null,
 };
 
 
@@ -211,27 +211,27 @@ $(document).ready(function() {
 
 function loadData() {
 
-    clearMapMarkers();
+	clearMapMarkers();
 
-    for (var r=0; r<model.schemas.length; r++) {
-        var schema = model.schemas[r];
-        $.ajax( {
-            url: model.jsonURL,
-            dataType: 'jsonp',
-            data: {
-            	key: model.key,
-                query: model.query
-            },
-            success: function(data) {
-                saveData(data);
-                refreshMapMarkers();
-            },
-            error: function(object, status) {
-                var msg = 'Failed to retrieve data for '+schema+' ('+status+'), try again';
-                errorMsg(msg);
-            }
-        } );
-    }
+	for (var r=0; r<model.queries.length; r++) {
+		var query = model.queries[r];
+		$.ajax( {
+			url: model.jsonURL,
+			dataType: 'jsonp',
+			data: {
+				key: model.key,
+				query: query
+			},
+			success: function(data) {
+				saveData(data);
+				refreshMapMarkers();
+			},
+			error: function(object, status) {
+				var msg = 'Failed to retrieve data for '+schema+' ('+status+'), try again';
+				errorMsg(msg);
+			}
+		} );
+	}
 }
 
 
