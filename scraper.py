@@ -13,6 +13,7 @@ import datetime
 import re
 from collections import OrderedDict
 from urllib2 import HTTPError
+import xml.etree.ElementTree as ElementTree
 
 TABLENAME = "cso_locations";
 
@@ -35,7 +36,7 @@ def cellval(cell, datemode):
 
 
 def scrapeXlsData(dataSetId, srcUrl):
-    print "Scraping XLS dataset: ",dataSetId+" from: "+srcUrl
+	print "Scraping XLS dataset: ",dataSetId+" from: "+srcUrl
 
     xlbin = scraperwiki.scrape(srcUrl)
     book = xlrd.open_workbook(file_contents=xlbin)
@@ -45,8 +46,8 @@ def scrapeXlsData(dataSetId, srcUrl):
     for i in range(len(keys)):
         keys[i] = keys[i].replace(' ','_').lower()
 
-    rowsSaved= 0
-    for rownumber in range(1, sheet.nrows):
+	rowsSaved= 0
+	for rownumber in range(1, sheet.nrows):
 
         # create dictionary of the row values
         values = [ cellval(c, book.datemode) for c in sheet.row(rownumber) ]
@@ -79,25 +80,35 @@ def scrapeXlsData(dataSetId, srcUrl):
                     break;
 
         # only save if it is a full row (rather than a blank line or a note)
-        if data['site_name'] != None:
-            scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-            rowsSaved = rowsSaved + 1
+		if data['site_name'] != None:
+			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			rowsSaved = rowsSaved + 1
 
-    print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
-    return rowsSaved
+	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
+	return rowsSaved
 
 
 def scrapeEpicollectXMLData(dataSetId, srcUrl):
 	rowsSaved = 0
 	print "Scraping Outfall dataset: ",dataSetId+" from: "+srcUrl
 	xml = scraperwiki.scrape(srcUrl)
+	dom = ElementTree.XML(xml)
+	for entry in dom.findAll('./table/entry'):
+		data = dict()
+		data['datasetid'] = dataSetId
+		data['rownumber'] = entry.find('id').text
+		data['site_name'] = entry.find('AddOutFDesc').text
+		data['lat'] = entry.find('PWSI_GPS_lat').text
+		data['lon'] = entry.find('PWSI_GPS_lon').text
+		rowsSaved++
+	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
 	return rowsSaved
 
 
 def dropTable():
-    sql = "DROP TABLE `"+TABLENAME+"`";
-    scraperwiki.sqlite.execute(sql);
-    scraperwiki.sqlite.commit();
+	sql = "DROP TABLE `"+TABLENAME+"`";
+	scraperwiki.sqlite.execute(sql);
+	scraperwiki.sqlite.commit();
 
 def createTable():
     sql = "CREATE TABLE IF NOT EXISTS `"+TABLENAME+"` ("+\
