@@ -332,14 +332,14 @@ function showDataPoint(dataSetId, point) {
 		return false;
 	}
 
-	if ( ! $('#cpds'+dataSetId+":checked") ) {
+	if ( ! $('#cpds'+dataSetId).prop('checked') ) {
 		console.log("showDataPoint("+dataSetId+","+point+") returning false (2)")
 		return false;
 	}
 
 	for (var i=0; i<model.ndt.length; i++) {
 		if (point.ndt == model.ndt[i]) {
-			if (! $('#cpdt'+i+":checked") ) {
+			if (! $('#cpdt'+i).prop('checked') ) {
 				console.log("showDataPoint("+dataSetId+","+point+") returning false (3)")
 				return false;
 			}
