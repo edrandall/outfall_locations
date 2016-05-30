@@ -121,7 +121,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 def lookupWatercourse(entry):
 	wcid = elementValue(entry, 'PWSO_watercourse')
 	if (wcid is not None):
-		wcname = SAFARI_WATERCOURSES[wcid]
+		wcname = SAFARI_WATERCOURSES.get(wcid)
 		if (wcname is not None):
 			return wcname
 	return wcid
