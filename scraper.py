@@ -100,7 +100,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['datasetid'] = dataSetId
 		data['rownumber'] = elementValue(entry, 'id')
 		data['lat'] = elementValue(entry, 'PWSI_GPS_lat')
-		data['lon'] = elementValue(entry, 'PWSI_GPS_lon')
+		data['lng'] = elementValue(entry, 'PWSI_GPS_lon')
 		data['site_name'] = elementValue(entry, ['AddOutFDesc', 'Outfall_Assessment_key'])
 		
 		if data['site_name'] != None:
