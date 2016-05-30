@@ -35,7 +35,7 @@ def cellval(cell, datemode):
 
 
 def scrapeXlsData(dataSetId, srcUrl):
-    print "Scraping dataset: ",dataSetId+" from: "+srcUrl
+    print "Scraping XLS dataset: ",dataSetId+" from: "+srcUrl
 
     xlbin = scraperwiki.scrape(srcUrl)
     book = xlrd.open_workbook(file_contents=xlbin)
@@ -87,6 +87,13 @@ def scrapeXlsData(dataSetId, srcUrl):
     return rowsSaved
 
 
+def scrapeEpicollectXMLData(dataSetId, srcUrl):
+	rowsSaved = 0
+	print "Scraping Outfall dataset: ",dataSetId+" from: "+srcUrl
+	xml = scraperwiki.scrape(srcUrl)
+	return rowsSaved
+
+
 def dropTable():
     sql = "DROP TABLE `"+TABLENAME+"`";
     scraperwiki.sqlite.execute(sql);
@@ -119,16 +126,21 @@ def createTable():
 createTable();
 SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
-		{ 'title':"DEP2009-2983", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
-		{ 'title':"Xl0000007", 'url':"http://www.cassilis.plus.com/TAC/Xl0000007.xls" },
-		{ 'title':"Crane-CSOs", 'url':"http://www.cassilis.plus.com/TAC/crane-cso-locations.xls" },
-		{ 'title':"Tributary-CSOs", 'url':"http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls" } ]
+		{ 'title':"DEP2009-2983", 'type':'xls', 'url':'http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls' },
+		{ 'title':"Xl0000007", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/Xl0000007.xls' },
+		{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
+		{ 'title':"Tributary-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls' },
+		{ 'title':"Crane-Outfall-Safari", 'type':'epicollect', 'url':'http://plus.epicollect.net/RiverCraneZSL/download' },
+		]
 
 rowsTotal = 0
 for source in SOURCES:
 	try:
-		if (source['url'].endswith('.xls')):
+		if (source['type'] == 'xls'):
 			rowsTotal += scrapeXlsData(source['title'], source['url'])
+		elif (source['type'] == 'epicollect'):
+			rowsTotal += scrapeEpicollectXMLData(source['title'], source['url'])
+			
 	except (HTTPError) as err:
 		print ("Could not load url: {0} - {1}".format(source['url'], err))
 print ("Saved {0} rows in total".format(rowsTotal))
