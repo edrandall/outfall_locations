@@ -93,7 +93,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 	print "Scraping Outfall dataset: ",dataSetId+" from: "+srcUrl
 	xml = scraperwiki.scrape(srcUrl)
 	dom = ElementTree.XML(xml)
-	for entry in dom.findAll('./table/entry'):
+	for entry in dom.findall('./table/entry'):
 		data = dict()
 		data['datasetid'] = dataSetId
 		data['rownumber'] = entry.find('id').text
