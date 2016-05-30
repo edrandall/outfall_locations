@@ -1,3 +1,6 @@
-scraperwiki==0.0.3
+# scraperwiki==0.0.3
+# List all available versions 
+# http://stackoverflow.com/questions/4888027/python-and-pip-list-all-versions-of-a-package-thats-available
+scraperwiki==999999
 osgb==0.2dev
 xlrd==0.7.1
