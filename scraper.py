@@ -24,6 +24,12 @@ DISCHARGE_TYPES = {
 	'Storm Tank Overflow':    re.compile('(storm\s+tank)', re.I),
 };
 
+SAFARI_WATERCOURSES = {
+	1: 'River Crane',
+	2: 'Yeading Brook East',
+	3: 'Yeading Brook West',
+};
+
 def cellval(cell, datemode):
 	if cell.ctype == xlrd.XL_CELL_DATE:
 		datetuple = xlrd.xldate_as_tuple(cell.value, datemode)
@@ -51,6 +57,7 @@ def scrapeXlsData(dataSetId, srcUrl):
 
 		# create dictionary of the row values
 		values = [ cellval(c, book.datemode) for c in sheet.row(rownumber) ]
+		# zip(keys,values) combines the two arrays: keys (column headings) and values into a single map.
 		data = dict(zip(keys, values))
 		data['rownumber'] = rownumber
 		data['datasetid'] = dataSetId
@@ -101,7 +108,8 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['rownumber'] = elementValue(entry, 'id')
 		data['lat'] = elementValue(entry, 'PWSI_GPS_lat')
 		data['lng'] = elementValue(entry, 'PWSI_GPS_lon')
-		data['site_name'] = elementValue(entry, ['AddOutFDesc', 'Outfall_Assessment_key'])
+		data['site_name'] = elementValue(entry, 'AddOutFDesc', 'Outfall_Assessment_key')
+		data['receiving_water'] = lookupWatercourse(entry)
 		
 		if data['site_name'] != None:
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
@@ -110,12 +118,20 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
 	return rowsSaved
 
-
-def elementValue(entry, keys):
+def lookupWatercourse(entry):
+	wcid = elementValue(entry, 'PWSO_watercourse')
+	wcname = SAFARI_WATERCOURSES[wcid]
+	if (wcname is None):
+		return wcid
+	return wcname
+	
+def elementValue(entry, *keys):
 	for k in keys:
 		element = entry.find(k)
-		if (element is not None and element.text):
-			return element.text
+		if (element is None):
+			continue
+		if (element.text):
+			return element.text.strip()
 	return None
 		
 
