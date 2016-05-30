@@ -85,7 +85,8 @@ def scrapeXlsData(dataSetId, srcUrl):
 
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
-			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			s = scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			print ("row({0},{1} saved:{2}",format(data['datasetid'],data['rownumber'],s))
 			rowsSaved = rowsSaved + 1
 
 	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
@@ -111,7 +112,8 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 		
 		if isValidRow(data):
-			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			s = scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			print ("row({0},{1} saved:{2}",format(data['datasetid'],data['rownumber'],s))
 			rowsSaved += 1
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
@@ -199,7 +201,7 @@ SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
 		#{ 'title':"DEP2009-2983", 'type':'xls', 'url':'http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls' },
 		#{ 'title':"Xl0000007", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/Xl0000007.xls' },
-		#{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
+		{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
 		#{ 'title':"Tributary-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls' },
 		{ 'title':"Crane-Outfall-Safari", 'type':'epicollect', 'url':'http://plus.epicollect.net/RiverCraneZSL/download' },
 	]
