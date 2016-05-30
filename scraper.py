@@ -34,7 +34,7 @@ def cellval(cell, datemode):
     return cell.value
 
 
-def scrapeData(dataSetId, srcUrl):
+def scrapeXlsData(dataSetId, srcUrl):
     print "Scraping dataset: ",dataSetId+" from: "+srcUrl
 
     xlbin = scraperwiki.scrape(srcUrl)
@@ -117,16 +117,17 @@ def createTable():
 #dropTable
 createTable();
 SOURCES=[
-        { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" },
-        # { 'title':"DEP2009-2983", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
-        { 'title':"Xl0000007", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
-        { 'title':"Crane-CSOs", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
-        { 'title':"Tributary-CSOs", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" } ]
+		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
+		{ 'title':"DEP2009-2983", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
+		{ 'title':"Xl0000007", 'url':"http://www.cassilis.plus.com/TAC/Xl0000007.xls" },
+		{ 'title':"Crane-CSOs", 'url':"http://www.cassilis.plus.com/TAC/crane-cso-locations.xls" },
+		{ 'title':"Tributary-CSOs", 'url':"http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls" } ]
 
 for source in SOURCES:
-    try:
-        scrapeData(source['title'], source['url'])
-    except (HTTPError) as err:
-        print ("Could not load url: {0} - {1}".format(source['url'], err))
+	try:
+		if (source['url'].endswith('.xls')):
+			scrapeXlsData(source['title'], source['url'])
+	except (HTTPError) as err:
+		print ("Could not load url: {0} - {1}".format(source['url'], err))
 
 
