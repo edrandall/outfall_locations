@@ -15,8 +15,6 @@ from collections import OrderedDict
 from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
 
-TABLENAME = 'data'
-
 # Normalised version of "discharge_type"
 DISCHARGE_TYPES = {
 	'Sewage Pumping Station': re.compile('(sps|sewage\s+pumping\s+station)', re.I),
@@ -242,8 +240,10 @@ def executeSQL(sql):
 	
 # Main program
 
-truncateTable(TABLENAME)
-dropTable(TABLENAME)
+TABLENAME = 'data2'
+
+#truncateTable(TABLENAME)
+#dropTable(TABLENAME)
 createTable(TABLENAME)
 
 SOURCES=[
