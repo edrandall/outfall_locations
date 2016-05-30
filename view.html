@@ -226,7 +226,7 @@ function loadData() {
 				query: query
 			},
 			success: function(data) {
-				saveData(data);
+				parseData(data);
 				resetControlPanel();
 				refreshMapMarkers();
 			},
@@ -239,8 +239,8 @@ function loadData() {
 }
 
 
-// Save all data converting to a separate array per datasetid
-function saveData(data) {
+// Parse incoming data converting to a separate array per datasetid
+function parseData(data) {
 	model.dataSets = new Array();
 	model.dataSetIds = new Array();
 
@@ -255,7 +255,7 @@ function saveData(data) {
 		}
 		dataSet.push(data[i]);
 	}
-	console.log("saveData: Found "+model.dataSetIds.length+" datasets");
+	console.log("parseData: loaded "+model.dataSetIds.length+" datasets");
 }
 
 function resetControlPanel() {
@@ -294,7 +294,8 @@ function resetControlPanel() {
 	}
 	for (var i=0; i<model.ndt.length; i++) {
 		var cbid = "#cpdt"+i;
-		$(cbid).click(refreshMapMarkers);
+		$(cbid).prop('checked', true)
+			.click(refreshMapMarkers);
 	}
 }
 
