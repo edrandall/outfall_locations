@@ -16,6 +16,7 @@ from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
 
 TABLENAME = 'data'
+SQL_VERBOSE = 2
 
 # Normalised version of "discharge_type"
 DISCHARGE_TYPES = {
@@ -75,7 +76,10 @@ def scrapeXlsData(dataSetId, srcUrl, tableName):
 
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
-			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=tableName);
+			scraperwiki.sqlite.save(unique_keys = ['datasetid', 'rownumber'], 
+						data = data, 
+						table_name = tableName,
+						verbose = SQL_VERBOSE)
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved = rowsSaved + 1
 			
@@ -118,7 +122,10 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl, tableName):
 		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 		
 		if isValidRow(data):
-			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=tableName);
+			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'],
+						data = data, 
+						table_name = tableName,
+						verbose = SQL_VERBOSE)
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved += 1
 			
@@ -249,7 +256,7 @@ SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
 		#{ 'title':"DEP2009-2983", 'type':'xls', 'url':'http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls' },
 		#{ 'title':"Xl0000007", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/Xl0000007.xls' },
-		{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
+		#{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
 		#{ 'title':"Tributary-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls' },
 		{ 'title':"Crane-Outfall-Safari", 'type':'epicollect', 'url':'http://plus.epicollect.net/RiverCraneZSL/download' },
 	]
