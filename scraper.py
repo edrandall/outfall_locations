@@ -84,7 +84,7 @@ def scrapeXlsData(dataSetId, srcUrl):
 		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 
 		# only save if it is a full row (rather than a blank line or a note)
-		if data.get('site_name') != None:
+		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
 			rowsSaved = rowsSaved + 1
 
@@ -110,13 +110,20 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['discharge_type'] = 'Outfall'
 		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 		
-		if data.get('site_name') != None:
+		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
 			rowsSaved += 1
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
 	return rowsSaved
 
+
+def isValidRow(row):
+	return (data.get('datasetid') != None and 
+		data.get('rownumber') != None and 
+		data.get('site_name') != None)
+		
+		
 def normalisedDischargeType(text):
 	if (text is not None):
 		for ndt in DISCHARGE_TYPES:
@@ -133,7 +140,7 @@ def lookupWatercourse(entry):
 	return wcid
 
 def elementValueInt(entry, *keys):
-	value = elementValue(entry, keys)
+	value = elementValue(entry, *keys)
 	try:
 		return int(value)
 	except:
@@ -141,7 +148,7 @@ def elementValueInt(entry, *keys):
 	return value
 
 def elementValueFloat(entry, *keys):
-	value = elementValue(entry, keys)
+	value = elementValue(entry, *keys)
 	try:
 		return float(value)
 	except:
