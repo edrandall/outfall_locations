@@ -12,6 +12,7 @@ import xlrd
 import datetime
 import re
 from collections import OrderedDict
+from urllib2 import HTTPError
 
 TABLENAME = "cso_locations";
 
@@ -115,8 +116,17 @@ def createTable():
 
 #dropTable
 createTable();
-scrapeData("DEP2009-2983", "http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls")
-scrapeData("Xl0000007",    "http://www.cassilis.plus.com/TAC/Xl0000007.xls")
-scrapeData("Crane-CSOs",   "http://www.cassilis.plus.com/TAC/crane-cso-locations.xls")
-scrapeData("Tributary-CSOs",   "http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls")
+SOURCES=[
+        { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" },
+        # { 'title':"DEP2009-2983", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
+        { 'title':"Xl0000007", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
+        { 'title':"Crane-CSOs", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" },
+        { 'title':"Tributary-CSOs", 'url':"http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls" } ]
+
+for source in SOURCES:
+    try:
+        scrapeData(source['title'], source['url'])
+    except (HttpError) as err:
+        print ("Could not load url: {0} - {1}".format(source['url'], err))
+
 
