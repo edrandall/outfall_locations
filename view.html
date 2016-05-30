@@ -95,7 +95,7 @@ html, body, #content {
 	top: 96px;
 	right: 10px;
 	width: 200px;
-	height: 350px;
+	height: 320px;
 	background-color: #FFFFFF;
 	border: 2px solid black;
 	border-radius: 5px;
@@ -114,6 +114,7 @@ html, body, #content {
 .cpattribute img {
 	width: 12px;
 	height: 20px;
+	padding-right: 4px;
 }
 
 #errorMessage {
@@ -331,16 +332,14 @@ function showDataPoint(dataSetId, point) {
 		return false;
 	}
 
-	var dscbox = $('#cpds'+dataSetId);
-	if (!dscbox.checked) {
+	if ( ! $('#cpds'+dataSetId+":checked") ) {
 		console.log("showDataPoint("+dataSetId+","+point+") returning false (2)")
 		return false;
 	}
 
 	for (var i=0; i<model.ndt.length; i++) {
 		if (point.ndt == model.ndt[i]) {
-			var dtcbox = $('#cpdt'+i);
-			if (!dtcbox.checked) {
+			if (! $('#cpdt'+i+":checked") ) {
 				console.log("showDataPoint("+dataSetId+","+point+") returning false (3)")
 				return false;
 			}
