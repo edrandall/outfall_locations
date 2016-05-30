@@ -1,6 +1,7 @@
 # Scrape Thames CSO data
 
 import scraperwiki
+from osgb import convert
 import xlrd
 import datetime
 import re
@@ -53,13 +54,13 @@ def scrapeData(dataSetId, srcUrl):
             data['lng'] = location[1];
 
         elif data.get('grid_ref') != None :
-            location = scraperwiki.geo.osgb_to_lonlat(data['grid_ref'])
+            location = convert.osgb_to_lonlat(data['grid_ref'])
             #print "grid_ref:",data['grid_ref']," location:",location
             data['lat'] = location[1];
             data['lng'] = location[0];
 
         elif data.get('grid_reference') != None :
-            location = scraperwiki.geo.osgb_to_lonlat(data['grid_reference'])
+            location = convert.osgb_to_lonlat(data['grid_reference'])
             data['lat'] = location[1];
             data['lng'] = location[0];
 
