@@ -95,7 +95,7 @@ html, body, #content {
 	top: 96px;
 	right: 10px;
 	width: 200px;
-	height: 265px;
+	height: 320px;
 	background-color: #FFFFFF;
 	border: 2px solid black;
 	border-radius: 5px;
@@ -166,12 +166,12 @@ var model = {
 	title: 'Thames CSO Map',
 	jsonURL: 'https://api.morph.io/edrandall/thames_cso_locations/data.json',
 	key: 'UYMEaitAVHPwK6bMbgFy',
-	queries: [ "select * from 'cso_locations' ORDER BY datasetid, lat, lng" ],
+	queries: [ "select * from 'cso_locations' ORDER BY datasetid, rownumber" ],
 	dataFormat: 'jsondict',
 	dataSets: new Array(),
 	dataSetIds: new Array(),
 	images: new Array(),
-	colours: [ "FF9966", "6699FF", "CCFF66", "9966FF", "FF3300", "996600", "FFFFFF" ],
+	colours: [ "FF9966", "6699FF", "CCFF66", "9966FF", "FF6699", "cc9966", "996600", "FF3300" ],
 	ndt: [ "Storm Sewer Overflow", "Sewage Pumping Station", "Storm Tank Overflow" ],
 	mapOptions: {
 		zoom: 8,
