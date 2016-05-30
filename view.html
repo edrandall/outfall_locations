@@ -164,9 +164,9 @@ html, body, #content {
   
 var model = {
     title: 'Thames CSO Map',
-    jsonURL: 'https://api.scraperwiki.com/api/1.0/datastore/sqlite',
-    schemas: [ 'thames_cso_locations' ],
-    query: 'select * from `cso_locations` ORDER BY datasetid, lat, lng',
+	jsonURL: 'https://api.morph.io/edrandall/thames_cso_locations/data.json',
+	key: 'UYMEaitAVHPwK6bMbgFy',
+    query: "select * from 'cso_locations' ORDER BY datasetid, lat, lng",
     dataFormat: 'jsondict',
     dataSets: new Array(),
     dataSetIds: new Array(),
@@ -219,9 +219,8 @@ function loadData() {
             url: model.jsonURL,
             dataType: 'jsonp',
             data: {
-                name: schema,
-                query: model.query,
-                format: model.dataFormat
+            	key: model.key,
+                query: model.query
             },
             success: function(data) {
                 saveData(data);
