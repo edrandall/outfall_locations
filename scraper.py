@@ -84,6 +84,7 @@ def scrapeXlsData(dataSetId, srcUrl):
             rowsSaved = rowsSaved + 1
 
     print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
+    return rowsSaved
 
 
 def dropTable():
@@ -123,11 +124,12 @@ SOURCES=[
 		{ 'title':"Crane-CSOs", 'url':"http://www.cassilis.plus.com/TAC/crane-cso-locations.xls" },
 		{ 'title':"Tributary-CSOs", 'url':"http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls" } ]
 
+rowsTotal = 0
 for source in SOURCES:
 	try:
 		if (source['url'].endswith('.xls')):
-			scrapeXlsData(source['title'], source['url'])
+			rowsTotal += scrapeXlsData(source['title'], source['url'])
 	except (HTTPError) as err:
 		print ("Could not load url: {0} - {1}".format(source['url'], err))
-
+print ("Saved {0} rows in total".format(rowsTotal))
 
