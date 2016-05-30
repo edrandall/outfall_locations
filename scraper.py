@@ -174,8 +174,11 @@ def elementValue(entry, *keys):
 
 def dropTable(name):
 	sql = "DROP TABLE `"+name+"`";
-	scraperwiki.sqlite.execute(sql);
-	scraperwiki.sqlite.commit();
+	try:
+		scraperwiki.sqlite.execute(sql);
+		scraperwiki.sqlite.commit();
+	except err:
+		print("Executing SQL: {0}\nwarning : {1}".format(sql, err))
 
 def createTable(name):
 	sql = "CREATE TABLE IF NOT EXISTS `"+name+"` ("+\
@@ -193,8 +196,11 @@ def createTable(name):
 			"`northings` real, "+\
 			"`grid_ref` text "+\
 			" )";
-	scraperwiki.sqlite.execute(sql);
-	scraperwiki.sqlite.commit();
+	try:
+		scraperwiki.sqlite.execute(sql);
+		scraperwiki.sqlite.commit();
+	except err:
+		print("Executing SQL: {0}\nerror : {1}".format(sql, err))
 
 # Main program
 
