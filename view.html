@@ -95,7 +95,7 @@ html, body, #content {
 	top: 96px;
 	right: 10px;
 	width: 200px;
-	height: 320px;
+	height: 350px;
 	background-color: #FFFFFF;
 	border: 2px solid black;
 	border-radius: 5px;
@@ -265,6 +265,7 @@ function saveData(data) {
 			"</td></tr>";
 		dstable.find('tbody:last').append(html);
 	}
+	errorMessage("Found "+model.dataSetIds.length+" datasets");
 
 	// Set up the name and click action for each discharge type filter
 	for (var i=0; i<=2; i++) {
@@ -321,7 +322,7 @@ function showDataPoint(dataSetId, point) {
 	if (!dscbox.checked)
 		return false;
 
-	for (i=0; i<model.ndt.length; i++) {
+	for (var i=0; i<model.ndt.length; i++) {
 		if (point.ndt == model.ndt[i]) {
 			var dtcbox = $('#cpdt'+i);
 			if (!dtcbox.checked)
@@ -349,14 +350,15 @@ function addMarker(map, iconId, point){
 
 
 function addDetailPopup(map, marker, point) {
-
 	var text = 
 		"Site name: "+point.site_name+"<br/>"+
 		"Type: "+point.discharge_type+"<br/>"+
-		"Water: "+point.receiving_water+"<br/>"+
-		"Grid ref.: "+point.grid_ref+"<br/>"+
-		"Licence: "+point.consent_reference+"<br/>"+
-		"Dataset: "+point.datasetid;
+		"Water: "+point.receiving_water;
+		if (point.grid_ref) 
+			text += "<br/>Grid ref.: "+point.grid_ref;
+		if (point.consent_reference)
+			text += "<br/>Licence: "+point.consent_reference;
+		text += "<br/>Dataset: "+point.datasetid;
 
 	google.maps.event.addListener(marker, 'click', function() {
 		$('.mapPopup').remove();
