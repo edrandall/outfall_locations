@@ -1,7 +1,12 @@
 # Scrape Thames CSO data
 
+# we used version 0.0.3 which had 'geo' - was removed in next release;
 import scraperwiki
-from osgb import convert
+
+# 2016-05-30: Attempt at coding around latest scraperwiki luib without geo;
+# but AssertionError: 'T' is not an OSGB 500km square
+# from osgb import convert
+
 import xlrd
 import datetime
 import re
@@ -54,13 +59,13 @@ def scrapeData(dataSetId, srcUrl):
             data['lng'] = location[1];
 
         elif data.get('grid_ref') != None :
-            location = convert.osgb_to_lonlat(data['grid_ref'])
+            location = scraperwiki.geo..osgb_to_lonlat(data['grid_ref'])
             #print "grid_ref:",data['grid_ref']," location:",location
             data['lat'] = location[1];
             data['lng'] = location[0];
 
         elif data.get('grid_reference') != None :
-            location = convert.osgb_to_lonlat(data['grid_reference'])
+            location = scraperwiki.geo.osgb_to_lonlat(data['grid_reference'])
             data['lat'] = location[1];
             data['lng'] = location[0];
 
@@ -79,12 +84,13 @@ def scrapeData(dataSetId, srcUrl):
     print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
 
 
-def createTable():
+def dropTable():
     sql = "DROP TABLE `"+TABLENAME+"`";
     scraperwiki.sqlite.execute(sql);
     scraperwiki.sqlite.commit();
 
-    sql = "CREATE TABLE `"+TABLENAME+"` ("+\
+def createTable():
+    sql = "CREATE TABLE IF NOT EXISTS `"+TABLENAME+"` ("+\
             "`datasetid` text, "+\
             "`rownumber` integer, "+\
             "`site_name` text, "+\
@@ -106,7 +112,8 @@ def createTable():
 
 # Main program
 
-#createTable();
+#dropTable
+createTable();
 #scrapeData("DEP2009-2983", "http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls")
 #scrapeData("Xl0000007",    "http://www.cassilis.plus.com/TAC/Xl0000007.xls")
 #scrapeData("Crane-CSOs",   "http://www.cassilis.plus.com/TAC/crane-cso-locations.xls")
