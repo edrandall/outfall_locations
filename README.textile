@@ -8,3 +8,6 @@ http://www.cassilis.plus.com/TAC/crane-cso-locations.xls
 
 view.html displays the CSO locations parsed by the "Thames CSO Locations" scraper.
 Points are displayed in a different colour according to the original dataset.
+
+Load the view against morph.io data with:
+http://htmlpreview.github.io/?https://github.com/edrandall/thames_cso_locations/blob/master/view.html
