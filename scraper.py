@@ -198,8 +198,9 @@ def createTable():
 
 # Main program
 
-#dropTable
-createTable();
+dropTable()
+createTable()
+
 SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
 		#{ 'title':"DEP2009-2983", 'type':'xls', 'url':'http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls' },
