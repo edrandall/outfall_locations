@@ -119,9 +119,9 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 
 
 def isValidRow(row):
-	return (data.get('datasetid') != None and 
-		data.get('rownumber') != None and 
-		data.get('site_name') != None)
+	return (row.get('datasetid') != None and 
+		row.get('rownumber') != None and 
+		row.get('site_name') != None)
 		
 		
 def normalisedDischargeType(text):
