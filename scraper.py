@@ -194,43 +194,51 @@ def debug(obj):
 
 
 def dropTable(name):
-	sql = "DROP TABLE `"+name+"`";
-	try:
-		scraperwiki.sqlite.execute(sql);
-		scraperwiki.sqlite.commit();
-	except BaseException as ex:
-		print("Executing SQL: {0}\nwarning : {1}".format(sql, ex))
+	sql = "DROP TABLE '{0}' IF EXISTS".format(name)
+	executeSQL(sql)
 
 def truncateTable(name):
 	sql = "DELETE FROM '{0}'".format(name)
+	executeSQL(sql)
+
+def createTable(tablename):
+	columns = {
+		'datasetid': 'text',
+		'rownumber': 'integer',
+		'site_name': 'text',
+		'site_id': 'text',
+		'discharge_type': 'text',
+		'ndt': 'text',
+		'receiving_water': 'text',
+		'consent_reference': 'text',
+		'lat': 'real',
+		'lng': 'real',
+		'eastings': 'real',
+		'northings': 'real',
+		'grid_ref': 'text'
+	}
+	
+	sql = "CREATE TABLE IF NOT EXISTS '{0}' (".format(tablename)
+	first = True
+	for (colname, coltype) in columns.items():
+		if (first):
+			first = False
+		else:
+			sql += ', '
+		sql += "'{0}' {1}".format(colname, coltype)
+	sql += ' );'
+	
+	executeSQL(sql)
+
+def executeSQL(sql):
 	try:
+		print("Executing SQL: {0}".format(sql))
 		scraperwiki.sqlite.execute(sql);
 		scraperwiki.sqlite.commit();
 	except BaseException as ex:
-		print("Executing SQL: {0}\nwarning : {1}".format(sql, ex))
+		print("SQL warning : {0}".format(ex))
 
-def createTable(name):
-	sql = "CREATE TABLE IF NOT EXISTS `"+name+"` ("+\
-			"`datasetid` text, "+\
-			"`rownumber` integer, "+\
-			"`site_name` text, "+\
-			"`site_id` text, "+\
-			"`discharge_type` text, "+\
-			"`ndt` text, "+\
-			"`receiving_water` text, "+\
-			"`consent_reference` text, "+\
-			"`lat` real, "+\
-			"`lng` real, "+\
-			"`eastings` real, "+\
-			"`northings` real, "+\
-			"`grid_ref` text "+\
-			" )";
-	try:
-		scraperwiki.sqlite.execute(sql);
-		scraperwiki.sqlite.commit();
-	except BaseException as ex:
-		print("Executing SQL: {0}\nerror : {1}".format(sql, ex))
-
+	
 # Main program
 
 truncateTable(TABLENAME)
