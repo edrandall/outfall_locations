@@ -90,18 +90,24 @@ def scrapeXlsData(dataSetId, srcUrl):
 
 def scrapeEpicollectXMLData(dataSetId, srcUrl):
 	rowsSaved = 0
+	rowsFound = 0
 	print "Scraping Outfall dataset: ",dataSetId+" from: "+srcUrl
 	xml = scraperwiki.scrape(srcUrl)
 	dom = ElementTree.XML(xml)
 	for entry in dom.findall('./table/entry'):
+		rowsFound += 1
 		data = dict()
 		data['datasetid'] = dataSetId
 		data['rownumber'] = elementValue(entry, 'id')
 		data['lat'] = elementValue(entry, 'PWSI_GPS_lat')
 		data['lon'] = elementValue(entry, 'PWSI_GPS_lon')
 		data['site_name'] = elementValue(entry, ['AddOutFDesc', 'Outfall_Assessment_key'])
-		rowsSaved += 1
-	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
+		
+		if data['site_name'] != None:
+			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			rowsSaved += 1
+
+	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
 	return rowsSaved
 
 
@@ -150,7 +156,7 @@ SOURCES=[
 		{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
 		{ 'title':"Tributary-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls' },
 		{ 'title':"Crane-Outfall-Safari", 'type':'epicollect', 'url':'http://plus.epicollect.net/RiverCraneZSL/download' },
-		]
+	]
 
 rowsTotal = 0
 for source in SOURCES:
