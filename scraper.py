@@ -14,6 +14,7 @@ import re
 from collections import OrderedDict
 from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
+from pprint import pprint
 
 TABLENAME = "cso_locations";
 
@@ -85,8 +86,9 @@ def scrapeXlsData(dataSetId, srcUrl):
 
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
-			s = scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved:{2}".format(data['datasetid'],data['rownumber'],s))
+			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			print ("row({0},{1} saved:".format(data['datasetid'],data['rownumber']))
+			pprint(vars(data))
 			rowsSaved = rowsSaved + 1
 
 	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
@@ -112,8 +114,9 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 		
 		if isValidRow(data):
-			s = scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved:{2}".format(data['datasetid'],data['rownumber'],s))
+			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			print ("row({0},{1} saved:".format(data['datasetid'],data['rownumber']))
+			pprint(vars(data))
 			rowsSaved += 1
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
