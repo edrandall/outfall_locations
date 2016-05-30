@@ -224,6 +224,7 @@ function loadData() {
 			},
 			success: function(data) {
 				saveData(data);
+				resetControlPanel();
 				refreshMapMarkers();
 			},
 			error: function(object, status) {
@@ -251,7 +252,10 @@ function saveData(data) {
 		}
 		dataSet.push(data[i]);
 	}
+	console.log("saveData: Found "+model.dataSetIds.length+" datasets");
+}
 
+function resetControlPanel() {
 	// Clear control panel dataset selectors...
 	var dstable = $('#cpdstable')
 	dstable.find('tr:gt(0)').remove();
@@ -264,8 +268,8 @@ function saveData(data) {
 			"<label for='"+cbname+"'>"+model.dataSetIds[i]+"</label>"+
 			"</td></tr>";
 		dstable.find('tbody:last').append(html);
+		console.log("resetControlPanel: i="+i+" cbid="+cbid+" cbname="+cbname);
 	}
-	errorMessage("Found "+model.dataSetIds.length+" datasets");
 
 	// Set up the name and click action for each discharge type filter
 	for (var i=0; i<=2; i++) {
@@ -315,21 +319,28 @@ function addMarkers(setId, dataSet) {
  
  
 function showDataPoint(dataSetId, point) {
-	if (!point|| !point.lat || !point.lng)
+	if (!point|| !point.lat || !point.lng) {
+		console.log("showDataPoint("+dataSetId+","+point+") returning false (1)")
 		return false;
+	}
 
 	var dscbox = $('#cpds'+dataSetId);
-	if (!dscbox.checked)
+	if (!dscbox.checked) {
+		console.log("showDataPoint("+dataSetId+","+point+") returning false (2)")
 		return false;
+	}
 
 	for (var i=0; i<model.ndt.length; i++) {
 		if (point.ndt == model.ndt[i]) {
 			var dtcbox = $('#cpdt'+i);
-			if (!dtcbox.checked)
+			if (!dtcbox.checked) {
+				console.log("showDataPoint("+dataSetId+","+point+") returning false (3)")
 				return false;
+			}
 		}
 	}
 
+	console.log("showDataPoint("+dataSetId+","+point+") returning true (4)")
 	return true;
 }
 
