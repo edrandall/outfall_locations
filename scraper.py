@@ -114,7 +114,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 def elementValue(entry, keys):
 	for k in keys:
 		element = entry.find(k)
-		if (element and element.text):
+		if (element is not None and element.text):
 			return element.text
 	return None
 		
