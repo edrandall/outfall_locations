@@ -100,7 +100,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['site_name'] = entry.find('AddOutFDesc').text
 		data['lat'] = entry.find('PWSI_GPS_lat').text
 		data['lon'] = entry.find('PWSI_GPS_lon').text
-		rowsSaved++
+		rowsSaved += 1
 	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
 	return rowsSaved
 
