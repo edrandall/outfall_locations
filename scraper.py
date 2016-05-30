@@ -15,7 +15,7 @@ from collections import OrderedDict
 from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
 
-TABLENAME = 'csotest'
+TABLENAME = 'data'
 
 # Normalised version of "discharge_type"
 DISCHARGE_TYPES = {
@@ -27,23 +27,12 @@ DISCHARGE_TYPES = {
 
 SAFARI_WATERCOURSES = {
 	'1': 'River Crane',
-	'2': 'Yeading Brook East',
-	'3': 'Yeading Brook West',
+	'2': 'Yeading Brook (east)',
+	'3': 'Yeading Brook (west)',
 };
 
 
-def cellval(cell, datemode):
-	if cell.ctype == xlrd.XL_CELL_DATE:
-		datetuple = xlrd.xldate_as_tuple(cell.value, datemode)
-		if datetuple[3:] == (0, 0, 0):
-			return datetime.date(datetuple[0], datetuple[1], datetuple[2])
-		return datetime.date(datetuple[0], datetuple[1], datetuple[2], datetuple[3], datetuple[4], datetuple[5])
-	if cell.ctype == xlrd.XL_CELL_EMPTY:    return None
-	if cell.ctype == xlrd.XL_CELL_BOOLEAN:  return cell.value == 1
-	return cell.value
-
-
-def scrapeXlsData(dataSetId, srcUrl):
+def scrapeXlsData(dataSetId, srcUrl, tableName):
 	print "Scraping XLS dataset: ",dataSetId+" from: "+srcUrl
 
 	xlbin = scraperwiki.scrape(srcUrl)
@@ -86,7 +75,7 @@ def scrapeXlsData(dataSetId, srcUrl):
 
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
-			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=tableName);
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved = rowsSaved + 1
 			
@@ -98,7 +87,18 @@ def scrapeXlsData(dataSetId, srcUrl):
 	return rowsSaved
 
 
-def scrapeEpicollectXMLData(dataSetId, srcUrl):
+def cellval(cell, datemode):
+	if cell.ctype == xlrd.XL_CELL_DATE:
+		datetuple = xlrd.xldate_as_tuple(cell.value, datemode)
+		if datetuple[3:] == (0, 0, 0):
+			return datetime.date(datetuple[0], datetuple[1], datetuple[2])
+		return datetime.date(datetuple[0], datetuple[1], datetuple[2], datetuple[3], datetuple[4], datetuple[5])
+	if cell.ctype == xlrd.XL_CELL_EMPTY:    return None
+	if cell.ctype == xlrd.XL_CELL_BOOLEAN:  return cell.value == 1
+	return cell.value
+
+
+def scrapeEpicollectXMLData(dataSetId, srcUrl, tableName):
 	rowsSaved = 0
 	rowNumber = 0
 	print "Scraping Outfall dataset: ",dataSetId+" from: "+srcUrl
@@ -118,7 +118,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 		
 		if isValidRow(data):
-			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
+			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=tableName);
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved += 1
 			
@@ -193,15 +193,15 @@ def debug(obj):
 		return obj;
 
 
-def dropTable(name):
-	sql = "DROP TABLE '{0}' IF EXISTS".format(name)
+def dropTable(tableName):
+	sql = "DROP TABLE '{0}' IF EXISTS".format(tableName)
 	executeSQL(sql)
 
-def truncateTable(name):
-	sql = "DELETE FROM '{0}'".format(name)
+def truncateTable(tableName):
+	sql = "DELETE FROM '{0}'".format(tableName)
 	executeSQL(sql)
 
-def createTable(tablename):
+def createTable(tableName):
 	columns = {
 		'datasetid': 'text',
 		'rownumber': 'integer',
@@ -218,7 +218,7 @@ def createTable(tablename):
 		'grid_ref': 'text'
 	}
 	
-	sql = "CREATE TABLE IF NOT EXISTS '{0}' (".format(tablename)
+	sql = "CREATE TABLE IF NOT EXISTS '{0}' (".format(tableName)
 	first = True
 	for (colname, coltype) in columns.items():
 		if (first):
@@ -258,11 +258,12 @@ rowsTotal = 0
 for source in SOURCES:
 	try:
 		if (source['type'] == 'xls'):
-			rowsTotal += scrapeXlsData(source['title'], source['url'])
+			rowsTotal += scrapeXlsData(source['title'], source['url'], TABLENAME)
 		elif (source['type'] == 'epicollect'):
-			rowsTotal += scrapeEpicollectXMLData(source['title'], source['url'])
+			rowsTotal += scrapeEpicollectXMLData(source['title'], source['url'], TABLENAME)
 			
 	except (HTTPError) as err:
 		print ("Could not load url: {0} - {1}".format(source['url'], err))
-print ("Saved {0} rows in total".format(rowsTotal))
+
+print ("Saved {0} rows total to {1}".format(rowsTotal, TABLENAME))
 
