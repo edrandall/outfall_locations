@@ -59,7 +59,7 @@ def scrapeData(dataSetId, srcUrl):
             data['lng'] = location[1];
 
         elif data.get('grid_ref') != None :
-            location = scraperwiki.geo..osgb_to_lonlat(data['grid_ref'])
+            location = scraperwiki.geo.osgb_to_lonlat(data['grid_ref'])
             #print "grid_ref:",data['grid_ref']," location:",location
             data['lat'] = location[1];
             data['lng'] = location[0];
