@@ -60,7 +60,7 @@ def scrapeXlsData(dataSetId, srcUrl):
 	rowsSaved = 0
 	for rowNumber in range(1, sheet.nrows):
 		# create dictionary of the row values
-		values = [ cellval(c, book.datemode) for c in sheet.row(rownumber) ]
+		values = [ cellval(c, book.datemode) for c in sheet.row(rowNumber) ]
 		# zip(keys,values) combines the two arrays: keys (column headings) and values into a single map.
 		data = dict(zip(keys, values))
 		data['rownumber'] = rowNumber
