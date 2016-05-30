@@ -178,7 +178,7 @@ var model = {
 	dataSetIds: new Array(),
 	images: new Array(),
 	colours: [ "FF9966", "6699FF", "CCFF66", "9966FF", "FF6699", "cc9966", "996600", "FF3300" ],
-	ndt: [ "Storm Sewer Overflow", "Sewage Pumping Station", "Storm Tank Overflow" ],
+	ndt: [ "Storm Sewer Overflow", "Sewage Pumping Station", "Storm Tank Overflow", "Outfall" ],
 	mapOptions: {
 		zoom: 8,
 		center: new google.maps.LatLng(51.500000, -1.000000),
@@ -260,8 +260,8 @@ function saveData(data) {
 
 function resetControlPanel() {
 	// Clear control panel dataset selectors...
-	var dstable = $('#cpdstable')
-	dstable.find('tr:gt(0)').remove();
+	var cptable = $('#cpdstable')
+	cptable.find('tr:gt(0)').remove();
 	// Set up the key icon, name and click action for each dataset
 	for (var i=0; i<model.dataSetIds.length; i++) {
 		var cbid = 'cpds'+i;
@@ -270,7 +270,7 @@ function resetControlPanel() {
 			"<input type='checkbox' id='"+cbid+"' name='"+cbname+"'>"+
 			"<label for='"+cbname+"'>"+model.dataSetIds[i]+"</label>"+
 			"</td></tr>";
-		dstable.find('tbody:last').append(html);
+		cptable.find('tbody:last').append(html);
 	}
 
 	for (var i=0; i<model.dataSetIds.length; i++) {
@@ -279,12 +279,22 @@ function resetControlPanel() {
 			.click(refreshMapMarkers);
 	}
 
+	// Clear control panel discharge type selectors...
+	cptable = $('#cpdttable')
+	cptable.find('tr:gt(0)').remove();
 	// Set up the name and click action for each discharge type filter
-	for (var i=0; i<=2; i++) {
-		var cssid = "#cpdt"+i;
-		var jqobj = $(cssid);
-		jqobj.next().text(model.ndt[i]);
-		jqobj.click(refreshMapMarkers);
+	for (var i=0; i<model.ndt.length; i++) {
+		var cbid = 'cpdt'+i;
+		var cbname = 'dt'+i;
+		var html = "<tr><td>"+
+			"<input type='checkbox' id='"+cbid+"' name='"+cbname+"'>"+
+			"<label for='"+cbname+"'>"+model.ndt[i]+"</label>"+
+			"</td></tr>";
+		cptable.find('tbody:last').append(html);
+	}
+	for (var i=0; i<model.ndt.length; i++) {
+		var cbid = "#cpdt"+i;
+		$(cbid).click(refreshMapMarkers);
 	}
 }
 
@@ -328,25 +338,21 @@ function addMarkers(setId, dataSet) {
  
 function showDataPoint(dataSetId, point) {
 	if (!point|| !point.lat || !point.lng) {
-		console.log("showDataPoint("+dataSetId+","+point+") returning false (1)")
 		return false;
 	}
 
 	if ( ! $('#cpds'+dataSetId).prop('checked') ) {
-		console.log("showDataPoint("+dataSetId+","+point+") returning false (2)")
 		return false;
 	}
 
 	for (var i=0; i<model.ndt.length; i++) {
 		if (point.ndt == model.ndt[i]) {
 			if (! $('#cpdt'+i).prop('checked') ) {
-				console.log("showDataPoint("+dataSetId+","+point+") returning false (3)")
 				return false;
 			}
 		}
 	}
 
-	console.log("showDataPoint("+dataSetId+","+point+") returning true (4)")
 	return true;
 }
 
@@ -594,13 +600,9 @@ InfoBox.prototype.panMap = function() {
 					</tbody>
 				</table>
 				<table class="cpattribute" id="cpdttable">
-				<tr><td>Discharge Type</td></tr>
-				<tr><td><img/><input id="cpdt0" type="checkbox" name="dt0" checked="yes">
-						<label for="dt0">Type 1</label></td></tr>
-				<tr><td><img/><input id="cpdt1" type="checkbox" name="dt1" checked="yes">
-						<label for="dt1">Type 2</label></td></tr>
-				<tr><td><img/><input id="cpdt2" type="checkbox" name="dt2" checked="yes">
-						<label for="dt2">Type 3</label></td></tr>
+					<tbody>
+						<tr><td>Discharge Type</td></tr>
+					</tbody>
 				</table>
 				<input id="cp_refresh" type="button" value="Refresh"/>
 			</form>
