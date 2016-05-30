@@ -14,7 +14,7 @@ import re
 from collections import OrderedDict
 from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
-from pprint import pprint
+import pprint
 
 TABLENAME = "cso_locations";
 
@@ -31,6 +31,8 @@ SAFARI_WATERCOURSES = {
 	'2': 'Yeading Brook East',
 	'3': 'Yeading Brook West',
 };
+
+PP = pprint.PrettyPrinter(indent=1, depth=2)
 
 def cellval(cell, datemode):
 	if cell.ctype == xlrd.XL_CELL_DATE:
@@ -54,15 +56,21 @@ def scrapeXlsData(dataSetId, srcUrl):
 	for i in range(len(keys)):
 		keys[i] = keys[i].replace(' ','_').lower()
 
-	rowsSaved= 0
+	rowsFound = 0
+	rowsSaved = 0
 	for rownumber in range(1, sheet.nrows):
-
+		rowsFound += 1
+		
 		# create dictionary of the row values
 		values = [ cellval(c, book.datemode) for c in sheet.row(rownumber) ]
 		# zip(keys,values) combines the two arrays: keys (column headings) and values into a single map.
 		data = dict(zip(keys, values))
 		data['rownumber'] = rownumber
 		data['datasetid'] = dataSetId
+
+		if 'grid_reference' in data:
+			data['grid_ref'] = data['grid_reference']
+			del data['grid_reference']
 
 		if data.get('eastings') != None and data.get('northings') != None :
 			location = scraperwiki.geo.os_easting_northing_to_latlng(data['eastings'], data['northings'])
@@ -76,10 +84,6 @@ def scrapeXlsData(dataSetId, srcUrl):
 			data['lat'] = location[1];
 			data['lng'] = location[0];
 
-		elif data.get('grid_reference') != None :
-			location = scraperwiki.geo.osgb_to_lonlat(data['grid_reference'])
-			data['lat'] = location[1];
-			data['lng'] = location[0];
 
 		# Find normalised version of "discharge_type"
 		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
@@ -87,11 +91,11 @@ def scrapeXlsData(dataSetId, srcUrl):
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved:".format(data['datasetid'],data['rownumber']))
-			pprint(data)
+			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], PP.pformat(data)))
 			rowsSaved = rowsSaved + 1
 
-	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
+	scraperwiki.sqlite.commit();
+	print "Dataset: {0} saved: {1}/{2}".format(dataSetId, rowsSaved, rowsFound)
 	return rowsSaved
 
 
@@ -115,10 +119,10 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved:".format(data['datasetid'],data['rownumber']))
-			pprint(data)
+			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], PP.pformat(data)))
 			rowsSaved += 1
 
+	scraperwiki.sqlite.commit();
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
 	return rowsSaved
 
@@ -180,18 +184,16 @@ def createTable():
 			"`datasetid` text, "+\
 			"`rownumber` integer, "+\
 			"`site_name` text, "+\
-			"`ndt` text, "+\
-			"`discharge_type` text, "+\
-			"`receiving_water` text, "+\
-			"`receiving_watercourse` text, "+\
 			"`site_id` text, "+\
+			"`discharge_type` text, "+\
+			"`ndt` text, "+\
+			"`receiving_water` text, "+\
 			"`consent_reference` text, "+\
 			"`lat` real, "+\
 			"`lng` real, "+\
 			"`eastings` real, "+\
 			"`northings` real, "+\
-			"`grid_ref` text, "+\
-			"`grid_reference` text"+\
+			"`grid_ref` text "+\
 			" )";
 	scraperwiki.sqlite.execute(sql);
 	scraperwiki.sqlite.commit();
