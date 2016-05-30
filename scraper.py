@@ -86,7 +86,7 @@ def scrapeXlsData(dataSetId, srcUrl):
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
 			s = scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved:{2}",format(data['datasetid'],data['rownumber'],s))
+			print ("row({0},{1} saved:{2}".format(data['datasetid'],data['rownumber'],s))
 			rowsSaved = rowsSaved + 1
 
 	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
@@ -113,7 +113,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		
 		if isValidRow(data):
 			s = scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved:{2}",format(data['datasetid'],data['rownumber'],s))
+			print ("row({0},{1} saved:{2}".format(data['datasetid'],data['rownumber'],s))
 			rowsSaved += 1
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
