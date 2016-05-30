@@ -96,14 +96,22 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 	for entry in dom.findall('./table/entry'):
 		data = dict()
 		data['datasetid'] = dataSetId
-		data['rownumber'] = entry.find('id').text
-		data['site_name'] = entry.find('AddOutFDesc').text
-		data['lat'] = entry.find('PWSI_GPS_lat').text
-		data['lon'] = entry.find('PWSI_GPS_lon').text
+		data['rownumber'] = elementValue(entry, 'id')
+		data['lat'] = elementValue(entry, 'PWSI_GPS_lat')
+		data['lon'] = eelementValue(entry, 'PWSI_GPS_lon')
+		data['site_name'] = elementValue(entry, ['AddOutFDesc', 'Outfall_Assessment_key'])
 		rowsSaved += 1
 	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
 	return rowsSaved
 
+
+def elementValue(entry, keys):
+	for k in keys:
+		element = entry.find(key)
+		if (element and element.text):
+			return element.text
+	return None
+		
 
 def dropTable():
 	sql = "DROP TABLE `"+TABLENAME+"`";
