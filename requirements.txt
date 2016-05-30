@@ -1,2 +1,3 @@
 scraperwiki==0.3.8
 osgb==0.2dev
+xlrd==0.7.1
