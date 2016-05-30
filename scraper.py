@@ -107,7 +107,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 
 def elementValue(entry, keys):
 	for k in keys:
-		element = entry.find(key)
+		element = entry.find(k)
 		if (element and element.text):
 			return element.text
 	return None
