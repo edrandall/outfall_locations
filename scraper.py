@@ -177,8 +177,8 @@ def dropTable(name):
 	try:
 		scraperwiki.sqlite.execute(sql);
 		scraperwiki.sqlite.commit();
-	except err:
-		print("Executing SQL: {0}\nwarning : {1}".format(sql, err))
+	except BaseException as ex:
+		print("Executing SQL: {0}\nwarning : {1}".format(sql, ex))
 
 def createTable(name):
 	sql = "CREATE TABLE IF NOT EXISTS `"+name+"` ("+\
@@ -199,8 +199,8 @@ def createTable(name):
 	try:
 		scraperwiki.sqlite.execute(sql);
 		scraperwiki.sqlite.commit();
-	except err:
-		print("Executing SQL: {0}\nerror : {1}".format(sql, err))
+	except BaseException as ex:
+		print("Executing SQL: {0}\nerror : {1}".format(sql, ex))
 
 # Main program
 
