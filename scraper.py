@@ -1,11 +1,12 @@
 # Scrape Thames CSO data
 
-# we used version 0.0.3 which had 'geo' - was removed in next release;
+# scraperwiki.geo was removed in version 0.3.0; 0.2.2 was last available
 import scraperwiki
 
-# 2016-05-30: Attempt at coding around latest scraperwiki luib without geo;
+# 2016-05-30: Attempt at coding around latest scraperwiki classic lib without geo;
 # but AssertionError: 'T' is not an OSGB 500km square
 # from osgb import convert
+# TODO: unvestigate 'ukgeo' (0.2.2 README comment)
 
 import xlrd
 import datetime
@@ -114,8 +115,8 @@ def createTable():
 
 #dropTable
 createTable();
-#scrapeData("DEP2009-2983", "http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls")
-#scrapeData("Xl0000007",    "http://www.cassilis.plus.com/TAC/Xl0000007.xls")
-#scrapeData("Crane-CSOs",   "http://www.cassilis.plus.com/TAC/crane-cso-locations.xls")
+scrapeData("DEP2009-2983", "http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls")
+scrapeData("Xl0000007",    "http://www.cassilis.plus.com/TAC/Xl0000007.xls")
+scrapeData("Crane-CSOs",   "http://www.cassilis.plus.com/TAC/crane-cso-locations.xls")
 scrapeData("Tributary-CSOs",   "http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls")
 
