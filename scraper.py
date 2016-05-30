@@ -78,10 +78,7 @@ def scrapeXlsData(dataSetId, srcUrl, tableName):
 						table_name = tableName)
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved = rowsSaved + 1
-			
-		if (rowsSaved > 3):
-			break
-		
+
 	print "Dataset: {0} saved: {1}/{2}".format(dataSetId, rowsSaved, rowNumber)
 	return rowsSaved
 
@@ -120,11 +117,8 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl, tableName):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'],
 						data = data, 
 						table_name = tableName)
-			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
+			print ("Saved row: ({0},{1})".format(data['datasetid'], data['rownumber']))
 			rowsSaved += 1
-			
-		if (rowsSaved > 3):
-			break
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowNumber))
 	return rowsSaved
@@ -240,7 +234,7 @@ def executeSQL(sql):
 	
 # Main program
 
-TABLENAME = 'data2'
+TABLENAME = 'cso_locations'
 
 #truncateTable(TABLENAME)
 #dropTable(TABLENAME)
