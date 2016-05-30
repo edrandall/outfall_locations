@@ -252,13 +252,18 @@ function saveData(data) {
 		dataSet.push(data[i]);
 	}
 
+	// Clear control panel dataset selectors...
+	var dstable = $('#cpdstable')
+	dstable.find('tr:gt(0)').remove();
 	// Set up the key icon, name and click action for each dataset
 	for (var i=0; i<model.dataSetIds.length; i++) {
-		var cssid = "#cpds"+i;
-		var jqobj = $(cssid);
-		jqobj.prev().attr('src', getIcon(i).url);
-		jqobj.next().text(model.dataSetIds[i]);
-		jqobj.click(refreshMapMarkers);
+		var cbid = 'cpds'+i;
+		var cbname = 'ds'+i;
+		var html = "<tr><td><img src='"+getIcon(i).url+"'/>"+
+			"<input type='checkbox' checked='yes' onclick='refreshMapMarkers' id='"+cbid+"' name='"+cbname+"'>"+
+			"<label for='"+cbname+"'>"+model.dataSetIds[i]+"</label>"+
+			"</td></tr>";
+		dstable.find('tbody:last').append(html);
 	}
 
 	// Set up the name and click action for each discharge type filter
@@ -312,23 +317,17 @@ function showDataPoint(dataSetId, point) {
 	if (!point|| !point.lat || !point.lng)
 		return false;
 
-	var form = document.forms['controls'];
-
-	if (dataSetId == 0 && !form.ds0.checked)
-		return false;
-	if (dataSetId == 1 && !form.ds1.checked)
-		return false;
-	if (dataSetId == 2 && !form.ds2.checked)
-		return false;
-	if (dataSetId == 3 && !form.ds3.checked)
+	var dscbox = $('#cpds'+dataSetId);
+	if (!dscbox.checked)
 		return false;
 
-	if (point.ndt == model.ndt[0] && !form.dt0.checked)
-		return false;
-	if (point.ndt == model.ndt[1] && !form.dt1.checked)
-		return false;
-	if (point.ndt == model.ndt[2] && !form.dt2.checked)
-		return false;
+	for (i=0; i<model.ndt.length; i++) {
+		if (point.ndt == model.ndt[i]) {
+			var dtcbox = $('#cpdt'+i);
+			if (!dtcbox.checked)
+				return false;
+		}
+	}
 
 	return true;
 }
@@ -570,18 +569,12 @@ InfoBox.prototype.panMap = function() {
 			<div id="cpclose" class="close">[X]</div>
 			Key
 			<form name="controls">
-				<table class="cpattribute">
-				<tr><td>Data Set</td></tr>
-				<tr><td><img/><input id="cpds0" type="checkbox" name="ds0" checked="yes">
-						<label for="ds0">Set 0</label></td></tr>
-				<tr><td><img/><input id="cpds1" type="checkbox" name="ds1" checked="yes">
-						<label for="ds1">Set 1</label></td></tr>
-				<tr><td><img/><input id="cpds2" type="checkbox" name="ds2" checked="yes">
-						<label for="ds2">Set 2</label></td></tr>
-				<tr><td><img/><input id="cpds3" type="checkbox" name="ds3" checked="yes">
-						<label for="ds3">Set 3</label></td></tr>
+				<table class="cpattribute" id="cpdstable">
+					<tbody>
+						<tr><td>Data Set</td></tr>
+					</tbody>
 				</table>
-				<table class="cpattribute">
+				<table class="cpattribute" id="cpdttable">
 				<tr><td>Discharge Type</td></tr>
 				<tr><td><img/><input id="cpdt0" type="checkbox" name="dt0" checked="yes">
 						<label for="dt0">Type 1</label></td></tr>
