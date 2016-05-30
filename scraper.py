@@ -104,8 +104,9 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl, tableName):
 		rowNumber += 1
 		data = dict()
 		data['datasetid'] = dataSetId
-		data['rownumber'] = rowNumber
-		data['site_id'] = elementValueInt(entry, 'id')
+		siteid = elementValueInt(entry, 'id')
+		data['rownumber'] = siteid
+		data['site_id'] = siteid
 		data['site_name'] = elementValue(entry, 'AddOutFDesc', 'Outfall_Assessment_key')
 		data['lat'] = elementValueFloat(entry, 'PWSI_GPS_lat')
 		data['lng'] = elementValueFloat(entry, 'PWSI_GPS_lon')
@@ -192,7 +193,7 @@ def dropTable(tableName):
 	executeSQL(sql)
 
 def truncateTable(tableName):
-	sql = "DELETE FROM '{0}'".format(tableName)
+	sql = "DELETE FROM '{0}' WHERE datasetid='{1}';".format(tableName, 'Crane-Outfall-Safari')
 	executeSQL(sql)
 
 def createTable(tableName):
@@ -236,7 +237,7 @@ def executeSQL(sql):
 
 TABLENAME = 'cso_locations'
 
-#truncateTable(TABLENAME)
+truncateTable(TABLENAME)
 #dropTable(TABLENAME)
 createTable(TABLENAME)
 
