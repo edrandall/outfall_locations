@@ -25,9 +25,9 @@ DISCHARGE_TYPES = {
 };
 
 SAFARI_WATERCOURSES = {
-	1: 'River Crane',
-	2: 'Yeading Brook East',
-	3: 'Yeading Brook West',
+	'1': 'River Crane',
+	'2': 'Yeading Brook East',
+	'3': 'Yeading Brook West',
 };
 
 def cellval(cell, datemode):
@@ -120,10 +120,11 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 
 def lookupWatercourse(entry):
 	wcid = elementValue(entry, 'PWSO_watercourse')
-	wcname = SAFARI_WATERCOURSES[wcid]
-	if (wcname is None):
-		return wcid
-	return wcname
+	if (wcid is not None):
+		wcname = SAFARI_WATERCOURSES[wcid]
+		if (wcname is not None):
+			return wcname
+	return wcid
 	
 def elementValue(entry, *keys):
 	for k in keys:
