@@ -88,7 +88,7 @@ def scrapeXlsData(dataSetId, srcUrl):
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
 			print ("row({0},{1} saved:".format(data['datasetid'],data['rownumber']))
-			pprint(vars(data))
+			pprint(data)
 			rowsSaved = rowsSaved + 1
 
 	print "Dataset: ",dataSetId," saved: ",rowsSaved," rows"
@@ -116,7 +116,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
 			print ("row({0},{1} saved:".format(data['datasetid'],data['rownumber']))
-			pprint(vars(data))
+			pprint(data)
 			rowsSaved += 1
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
