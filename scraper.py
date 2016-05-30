@@ -14,7 +14,6 @@ import re
 from collections import OrderedDict
 from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
-import pprint
 
 TABLENAME = 'cso_locations'
 
@@ -32,7 +31,6 @@ SAFARI_WATERCOURSES = {
 	'3': 'Yeading Brook West',
 };
 
-PP = pprint.PrettyPrinter(indent=1, depth=2)
 
 def cellval(cell, datemode):
 	if cell.ctype == xlrd.XL_CELL_DATE:
@@ -89,7 +87,7 @@ def scrapeXlsData(dataSetId, srcUrl):
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], PP.pformat(data)))
+			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved = rowsSaved + 1
 
 	scraperwiki.sqlite.commit();
@@ -118,7 +116,7 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
-			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], PP.pformat(data)))
+			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved += 1
 
 	scraperwiki.sqlite.commit();
@@ -170,7 +168,24 @@ def elementValue(entry, *keys):
 		if (element.text):
 			return element.text.strip()
 	return None
-		
+
+
+def debug(obj):
+ 	if isinstance(obj, dict):
+ 		out = []
+		for k, v in sorted( obj.items() ):
+			out.append( u'{0}: {1}'.format(k, v) )
+		return '{'+', '.join(out)+'}'
+
+	elif isinstance(obj, list) or isinstance(obj, tuple):
+		out = []   
+		for v in obj:
+			out.append( v )
+		return '['+', '.join(out)+']'
+
+	else: 
+		return obj;
+
 
 def dropTable(name):
 	sql = "DROP TABLE `"+name+"`";
