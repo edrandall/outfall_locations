@@ -22,6 +22,7 @@ DISCHARGE_TYPES = {
 	'Sewage Pumping Station': re.compile('(sps|sewage\s+pumping\s+station)', re.I),
 	'Storm Sewer Overflow':   re.compile('(sewer\s+storm\s+overflow|storm\s+sewer\s+overflow)', re.I),
 	'Storm Tank Overflow':    re.compile('(storm\s+tank)', re.I),
+	'Outfall':                re.compile('(outfall|land\s+drain)', re.I),
 };
 
 SAFARI_WATERCOURSES = {
@@ -80,14 +81,10 @@ def scrapeXlsData(dataSetId, srcUrl):
 			data['lng'] = location[0];
 
 		# Find normalised version of "discharge_type"
-		if (data['discharge_type'] != None):
-			for ndt in DISCHARGE_TYPES:
-				if (DISCHARGE_TYPES[ndt].search(data['discharge_type']) != None):
-					data['ndt'] = ndt;
-					break;
+		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 
 		# only save if it is a full row (rather than a blank line or a note)
-		if data['site_name'] != None:
+		if data.get('site_name') != None:
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
 			rowsSaved = rowsSaved + 1
 
@@ -105,18 +102,27 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl):
 		rowsFound += 1
 		data = dict()
 		data['datasetid'] = dataSetId
-		data['rownumber'] = elementValue(entry, 'id')
-		data['lat'] = elementValue(entry, 'PWSI_GPS_lat')
-		data['lng'] = elementValue(entry, 'PWSI_GPS_lon')
+		data['rownumber'] = elementValueInt(entry, 'id')
 		data['site_name'] = elementValue(entry, 'AddOutFDesc', 'Outfall_Assessment_key')
+		data['lat'] = elementValueFloat(entry, 'PWSI_GPS_lat')
+		data['lng'] = elementValueFloat(entry, 'PWSI_GPS_lon')
 		data['receiving_water'] = lookupWatercourse(entry)
+		data['discharge_type'] = 'Outfall'
+		data['ndt'] = normalisedDischargeType( data.get('discharge_type') )
 		
-		if data['site_name'] != None:
+		if data.get('site_name') != None:
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'], data=data, table_name=TABLENAME);
 			rowsSaved += 1
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowsFound))
 	return rowsSaved
+
+def normalisedDischargeType(text):
+	if (text is not None):
+		for ndt in DISCHARGE_TYPES:
+			if (DISCHARGE_TYPES[ndt].search(text) is not None):
+				return ndt
+	return None
 
 def lookupWatercourse(entry):
 	wcid = elementValue(entry, 'PWSO_watercourse')
@@ -125,7 +131,23 @@ def lookupWatercourse(entry):
 		if (wcname is not None):
 			return wcname
 	return wcid
-	
+
+def elementValueInt(entry, *keys):
+	value = elementValue(entry, keys)
+	try:
+		return int(value)
+	except:
+		pass
+	return value
+
+def elementValueFloat(entry, *keys):
+	value = elementValue(entry, keys)
+	try:
+		return float(value)
+	except:
+		pass
+	return value
+
 def elementValue(entry, *keys):
 	for k in keys:
 		element = entry.find(k)
@@ -168,10 +190,10 @@ def createTable():
 createTable();
 SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
-		{ 'title':"DEP2009-2983", 'type':'xls', 'url':'http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls' },
-		{ 'title':"Xl0000007", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/Xl0000007.xls' },
-		{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
-		{ 'title':"Tributary-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls' },
+		#{ 'title':"DEP2009-2983", 'type':'xls', 'url':'http://data.parliament.uk/DepositedPapers/Files/DEP2009-2983/DEP2009-2983.xls' },
+		#{ 'title':"Xl0000007", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/Xl0000007.xls' },
+		#{ 'title':"Crane-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/crane-cso-locations.xls' },
+		#{ 'title':"Tributary-CSOs", 'type':'xls', 'url':'http://www.cassilis.plus.com/TAC/tributary-cso-locations.xls' },
 		{ 'title':"Crane-Outfall-Safari", 'type':'epicollect', 'url':'http://plus.epicollect.net/RiverCraneZSL/download' },
 	]
 
