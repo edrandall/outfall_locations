@@ -111,6 +111,11 @@ html, body, #content {
 	font-size: 12px;
 }
 
+.cpattribute img {
+	width: 12px;
+	height: 20px;
+}
+
 #errorMessage {
 	position: absolute;
 	display: none;
@@ -199,9 +204,6 @@ $(document).ready(function() {
 		$(this).parent().slideUp();
 	});
 
-	$('.cpattribute img').attr('width', 12)
-						 .attr('height', 20);
-
 	$('#cp_refresh').click(loadData);
 
 	createMap();
@@ -264,11 +266,16 @@ function resetControlPanel() {
 		var cbid = 'cpds'+i;
 		var cbname = 'ds'+i;
 		var html = "<tr><td><img src='"+getIcon(i).url+"'/>"+
-			"<input type='checkbox' checked='yes' onclick='refreshMapMarkers' id='"+cbid+"' name='"+cbname+"'>"+
+			"<input type='checkbox' id='"+cbid+"' name='"+cbname+"'>"+
 			"<label for='"+cbname+"'>"+model.dataSetIds[i]+"</label>"+
 			"</td></tr>";
 		dstable.find('tbody:last').append(html);
-		console.log("resetControlPanel: i="+i+" cbid="+cbid+" cbname="+cbname);
+	}
+
+	for (var i=0; i<model.dataSetIds.length; i++) {
+		var cbid = '#cpds'+i;
+		$(cbid).prop('checked', true)
+			.click(refreshMapMarkers);
 	}
 
 	// Set up the name and click action for each discharge type filter
