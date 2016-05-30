@@ -16,7 +16,6 @@ from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
 
 TABLENAME = 'data'
-SQL_VERBOSE = 2
 
 # Normalised version of "discharge_type"
 DISCHARGE_TYPES = {
@@ -78,15 +77,13 @@ def scrapeXlsData(dataSetId, srcUrl, tableName):
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys = ['datasetid', 'rownumber'], 
 						data = data, 
-						table_name = tableName,
-						verbose = SQL_VERBOSE)
+						table_name = tableName)
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved = rowsSaved + 1
 			
 		if (rowsSaved > 3):
 			break
 		
-	scraperwiki.sqlite.commit();
 	print "Dataset: {0} saved: {1}/{2}".format(dataSetId, rowsSaved, rowNumber)
 	return rowsSaved
 
@@ -124,15 +121,13 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl, tableName):
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'],
 						data = data, 
-						table_name = tableName,
-						verbose = SQL_VERBOSE)
+						table_name = tableName)
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved += 1
 			
 		if (rowsSaved > 3):
 			break
 
-	scraperwiki.sqlite.commit();
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowNumber))
 	return rowsSaved
 
@@ -241,7 +236,6 @@ def executeSQL(sql):
 	try:
 		print("Executing SQL: {0}".format(sql))
 		scraperwiki.sqlite.execute(sql);
-		scraperwiki.sqlite.commit();
 	except BaseException as ex:
 		print("SQL warning : {0}".format(ex))
 
