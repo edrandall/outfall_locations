@@ -126,7 +126,7 @@ SOURCES=[
 for source in SOURCES:
     try:
         scrapeData(source['title'], source['url'])
-    except (HttpError) as err:
+    except (HTTPError) as err:
         print ("Could not load url: {0} - {1}".format(source['url'], err))
 
 
