@@ -15,7 +15,7 @@ from collections import OrderedDict
 from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
 
-TABLENAME = 'cso_locations'
+TABLENAME = 'csotest'
 
 # Normalised version of "discharge_type"
 DISCHARGE_TYPES = {
