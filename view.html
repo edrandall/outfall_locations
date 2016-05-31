@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<meta charset="UTF-8">
-		<style type="text/css">
+<head>
+<title>Sewer Overflow Locations - Thames Anglers' Conservancy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="author" content="Ed Randall">
+<meta name="revision" content="20160531-01">
+<style type="text/css">
 html, body, #content {
 	margin: 0;
 	padding: 0;
@@ -162,12 +164,11 @@ html, body, #content {
 	border-radius: 2px;
 	padding: 1px 3px 0px 3px;
 }
-		</style>
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-		<script type="text/javascript">
+</style>
 
-	
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+<script type="text/javascript">
 var model = {
 	title: 'Thames CSO Map',
 	jsonURL: 'https://api.morph.io/edrandall/thames_cso_locations/data.json',
@@ -581,10 +582,10 @@ InfoBox.prototype.panMap = function() {
 	google.maps.event.removeListener(this.boundsChangedListener_);
 	this.boundsChangedListener_ = null;
 };
-		</script>
-	</head>
-	<body>
-		<div id="content">
+</script>
+</head>
+<body>
+	<div id="content">
 		<div id="header">
 			<div id="tac"><a href="http://www.rivertac.org/">TAC</a></div>
 			<div id="title"></div>
@@ -612,6 +613,6 @@ InfoBox.prototype.panMap = function() {
 			  Error messages
 			</div>
 		</div>
-		</div>
-	</body>
+	</div>
+</body>
 <html>
