@@ -192,8 +192,8 @@ def dropTable(tableName):
 	sql = "DROP TABLE '{0}' IF EXISTS".format(tableName)
 	executeSQL(sql)
 
-def truncateTable(tableName):
-	sql = "DELETE FROM '{0}' WHERE datasetid='{1}';".format(tableName, 'Crane-Outfall-Safari')
+def truncateTable(tableName, dataSetId):
+	sql = "DELETE FROM '{0}' WHERE datasetid='{1}';".format(tableName, dataSetId)
 	executeSQL(sql)
 
 def createTable(tableName):
@@ -237,9 +237,9 @@ def executeSQL(sql):
 
 TABLENAME = 'cso_locations'
 
-truncateTable(TABLENAME)
-#dropTable(TABLENAME)
-createTable(TABLENAME)
+# truncateTable(TABLENAME, 'Crane-Outfall-Safari')
+# dropTable(TABLENAME)
+# createTable(TABLENAME)
 
 SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
