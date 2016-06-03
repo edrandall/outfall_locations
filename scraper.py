@@ -1,4 +1,26 @@
-# Scrape Thames CSO data
+# This is a Python scraper on morph.io (https://morph.io)
+
+# import scraperwiki
+# import lxml.html
+#
+# # Read in a page
+# html = scraperwiki.scrape("http://foo.com")
+#
+# # Find something on the page using css selectors
+# root = lxml.html.fromstring(html)
+# root.cssselect("div[align='left']")
+#
+# # Write out to the sqlite database using scraperwiki library
+# scraperwiki.sqlite.save(unique_keys=['name'], data={"name": "susan", "occupation": "software developer"})
+#
+# # An arbitrary query against the database
+# scraperwiki.sql.select("* from data where 'name'='peter'")
+
+# You don't have to do things with the ScraperWiki and lxml libraries.
+# You can use whatever libraries you want: https://morph.io/documentation/python
+# All that matters is that your final data is written to an SQLite database
+# called "data.sqlite" in the current working directory which has at least a table
+# called "data".
 
 # scraperwiki.geo was removed in version 0.3.0; 0.2.2 was last available
 import scraperwiki
@@ -14,6 +36,7 @@ import re
 from collections import OrderedDict
 from urllib2 import HTTPError
 import xml.etree.ElementTree as ElementTree
+
 
 # Normalised version of "discharge_type"
 DISCHARGE_TYPES = {
@@ -74,11 +97,13 @@ def scrapeXlsData(dataSetId, srcUrl, tableName):
 		# only save if it is a full row (rather than a blank line or a note)
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys = ['datasetid', 'rownumber'], 
-						data = data, 
-						table_name = tableName)
+						data = data)
 			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved = rowsSaved + 1
-
+			
+		if (rowsSaved > 3):
+			break
+		
 	print "Dataset: {0} saved: {1}/{2}".format(dataSetId, rowsSaved, rowNumber)
 	return rowsSaved
 
@@ -104,9 +129,8 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl, tableName):
 		rowNumber += 1
 		data = dict()
 		data['datasetid'] = dataSetId
-		siteid = elementValueInt(entry, 'id')
-		data['rownumber'] = siteid
-		data['site_id'] = siteid
+		data['rownumber'] = rowNumber
+		data['site_id'] = elementValueInt(entry, 'id')
 		data['site_name'] = elementValue(entry, 'AddOutFDesc', 'Outfall_Assessment_key')
 		data['lat'] = elementValueFloat(entry, 'PWSI_GPS_lat')
 		data['lng'] = elementValueFloat(entry, 'PWSI_GPS_lon')
@@ -116,10 +140,12 @@ def scrapeEpicollectXMLData(dataSetId, srcUrl, tableName):
 		
 		if isValidRow(data):
 			scraperwiki.sqlite.save(unique_keys=['datasetid', 'rownumber'],
-						data = data, 
-						table_name = tableName)
-			print ("Saved row: ({0},{1})".format(data['datasetid'], data['rownumber']))
+						data = data)
+			print ("row({0},{1} saved: {2}".format(data['datasetid'], data['rownumber'], debug(data)))
 			rowsSaved += 1
+			
+		if (rowsSaved > 3):
+			break
 
 	print ("Dataset: {0} saved: {1}/{2} rows".format(dataSetId, rowsSaved, rowNumber))
 	return rowsSaved
@@ -192,8 +218,8 @@ def dropTable(tableName):
 	sql = "DROP TABLE '{0}' IF EXISTS".format(tableName)
 	executeSQL(sql)
 
-def truncateTable(tableName, dataSetId):
-	sql = "DELETE FROM '{0}' WHERE datasetid='{1}';".format(tableName, dataSetId)
+def truncateTable(tableName):
+	sql = "DELETE FROM '{0}'".format(tableName)
 	executeSQL(sql)
 
 def createTable(tableName):
@@ -235,11 +261,11 @@ def executeSQL(sql):
 	
 # Main program
 
-TABLENAME = 'cso_locations'
+TABLENAME = 'data'
 
-# truncateTable(TABLENAME, 'Crane-Outfall-Safari')
-# dropTable(TABLENAME)
-# createTable(TABLENAME)
+#truncateTable(TABLENAME)
+#dropTable(TABLENAME)
+createTable(TABLENAME)
 
 SOURCES=[
 		# { 'title':"DEP2009-2983", 'url':"http://www.parliament.uk/deposits/depositedpapers/2009/DEP2009-2983.xls" }, # old location
@@ -254,7 +280,7 @@ rowsTotal = 0
 for source in SOURCES:
 	try:
 		if (source['type'] == 'xls'):
-			rowsTotal += scrapeXlsData(source['title'], source['url'], TABLENAME)
+			rowsTotal += scrapeXlsData(source['title'], source['url'])
 		elif (source['type'] == 'epicollect'):
 			rowsTotal += scrapeEpicollectXMLData(source['title'], source['url'], TABLENAME)
 			
